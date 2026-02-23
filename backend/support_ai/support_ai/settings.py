@@ -9,6 +9,21 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OLLAMA_HOST = os.getenv("OLLAMA_HOST")
+OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL")
+EMBED_MODEL = os.getenv("EMBED_MODEL")
+OLLAMA_EMBED_HOST = os.getenv("OLLAMA_EMBED_HOST")
+ZILLIZ_URL = os.getenv("ZILLIZ_URL")
+ZILLIZ_API_KEY = os.getenv("ZILLIZ_API_KEY")
+ZILLIZ_DB_NAME = os.getenv("ZILLIZ_DB_NAME")
+
+import dj_database_url
 
 from pathlib import Path
 
@@ -25,7 +40,7 @@ SECRET_KEY = 'django-insecure-l9&!5)!()s3y3cga(rnnm5mo))tmypzs9y2n4!4b1%)7yu-%v%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -37,9 +52,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'supportAI',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -73,11 +92,16 @@ WSGI_APPLICATION = 'support_ai.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+DATABASES =  {
+
+    "default":
+
+    dj_database_url.parse(
+
+    os.getenv("DATABASE_URL")
+
+    )
+
 }
 
 
@@ -121,3 +145,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_ALL_ORIGINS = True

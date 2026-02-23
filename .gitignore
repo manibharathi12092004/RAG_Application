@@ -4,3 +4,5 @@ embedded_documents.json
 __pycache__/
 docker-compose.yml
 .env
+package-lock.json
+package.json
