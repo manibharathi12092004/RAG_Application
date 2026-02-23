@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+import os
+
 from pymilvus import (
 
     connections,
@@ -11,20 +14,34 @@ from pymilvus import (
 
 import json
 
+load_dotenv()
 
+ZILLIZ_URL = os.getenv("ZILLIZ_URL")
+ZILLIZ_API_KEY = os.getenv("ZILLIZ_API_KEY")
+DB_NAME = os.getenv("ZILLIZ_DB_NAME")
 # ===================================
-# CONNECT MILVUS
+# CONNECT ZILLIS CLOUD
 # ===================================
+
+if not ZILLIZ_URL or not ZILLIZ_API_KEY:
+    raise Exception("Missing Zilliz credentials")
+
 
 connections.connect(
 
-    host="localhost",
-    port="19530"
+    alias="default",
+
+    uri=ZILLIZ_URL,
+
+    token=ZILLIZ_API_KEY,
+
+    db_name=DB_NAME,
+
+    secure=True
 
 )
 
-print("Connected to Milvus")
-
+print("Connected to Zilliz Cloud")
 
 # ===================================
 # LOAD JSON

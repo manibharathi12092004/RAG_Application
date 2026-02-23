@@ -3,3 +3,4 @@ Milvus/
 embedded_documents.json
 __pycache__/
 docker-compose.yml
+.env
