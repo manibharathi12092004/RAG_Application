@@ -52,7 +52,5 @@ def process(question, user_id):
     )
 
     return {
-        "answer": answer,
-        "provider": provider,
-        "intent": intent
+        "answer": answer
     }

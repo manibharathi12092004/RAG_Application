@@ -27,7 +27,4 @@ def embed_query(query: str):
 
     data = response.json()
 
-    print("DEBUG:", data)  # remove later
-
-    # Ollama returns single embedding
     return data["embeddings"][0]

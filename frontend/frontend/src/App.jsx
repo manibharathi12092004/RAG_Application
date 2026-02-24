@@ -1,14 +1,16 @@
 import React from 'react';
-import ChatWindow from './components/ChatWindow';
-import './styles/chat.css';
+import ChatWindow from './ChatWindow';
+import './index.css';
 
 function App() {
   return (
-    <div className="chat-app-container">
-      <header className="chat-header">
-        SaaS Support Assistant
+    <div className="app-container">
+      <header>
+        PolicyMind AI
       </header>
-      <ChatWindow />
+      <main>
+        <ChatWindow />
+      </main>
     </div>
   );
 }

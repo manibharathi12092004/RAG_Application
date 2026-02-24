@@ -1,46 +1,67 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import MessageBubble from './MessageBubble';
 import InputBox from './InputBox';
 
 function ChatWindow() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const chatEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
 
   const sendMessage = async (text) => {
     if (!text.trim()) return;
-    setMessages([...messages, { sender: 'user', text }]);
+
+    // Add user message to state
+    const userMessage = { sender: 'user', text };
+    setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
+
     try {
-      // Replace with your backend API call
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
+      const response = await axios.post('http://127.0.0.1:8000/api/chat/', {
+        user_id: 1,
+        question: text
       });
-      const data = await response.json();
-      setMessages((msgs) => [...msgs, { sender: 'ai', text: data.reply }]);
+
+      // Assuming the response data structure has the AI's reply
+      // Update this based on the actual backend response format if different
+      const aiReply = response.data.answer || response.data.response || response.data.reply;
+
+      setMessages((prev) => [...prev, { sender: 'assistant', text: aiReply }]);
     } catch (e) {
-      setMessages((msgs) => [...msgs, { sender: 'ai', text: 'Sorry, something went wrong.' }]);
+      setMessages((prev) => [...prev, { sender: 'assistant', text: '⚠️ PolicyMind AI: Sorry, I am having trouble connecting to the server. Please check if the backend is running.' }]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="w-full max-w-xl flex flex-col h-[80vh] bg-white rounded-lg shadow-lg overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+    <div className="chat-container">
+      <div className="chat-window">
         {messages.map((msg, idx) => (
           <MessageBubble key={idx} sender={msg.sender} text={msg.text} />
         ))}
+
         {loading && (
-          <div className="flex items-center space-x-2">
-            <span className="animate-spin h-5 w-5 border-4 border-blue-400 border-t-transparent rounded-full"></span>
-            <span className="text-gray-500">AI is typing...</span>
+          <div className="message assistant">
+            <div className="bubble thinking">
+              PolicyMind AI is thinking
+              <span className="dot-flashing"></span>
+            </div>
           </div>
         )}
+
+        <div ref={chatEndRef} />
       </div>
-      <div className="border-t p-3 bg-gray-50">
-        <InputBox onSend={sendMessage} loading={loading} />
-      </div>
+
+      <InputBox onSend={sendMessage} loading={loading} />
     </div>
   );
 }

@@ -7,33 +7,30 @@ def generate_answer(
     policies
 ):
 
-    # Convert lists/dicts to readable text
-    policies_text = "\n\n".join(policies) if policies else "No policy found."
-
-    subscription_text = (
-        str(subscription)
-        if subscription
-        else "No active subscription information available."
-    )
+    # Compose hidden context for LLM only
+    policy_context = "\n\n".join(policies) if policies else ""
+    subscription_text = str(subscription) if subscription else ""
 
     prompt = f"""
-You are a professional SaaS Support Assistant.
+You are PolicyMind AI, a SaaS subscription support assistant.
 
-Use ONLY the provided policies and subscription information
-to answer the customer question.
+Use the provided policy context and customer subscription information internally to reason.
 
-Policies:
-{policies_text}
+DO NOT mention retrieved documents or policies explicitly.
+DO NOT output tables.
+DO NOT list possible scenarios unless necessary.
 
-Customer Subscription:
+Provide a short, clear, conversational explanation answering the customer question.
+
+Policy Context (for internal use only):
+{policy_context}
+
+Customer Subscription (for internal use only):
 {subscription_text}
 
 Customer Question:
 {question}
-
-Give a clear, helpful, and concise answer.
 """
 
     response = llm_chat(prompt)
-
-    return response
+    return response.strip()

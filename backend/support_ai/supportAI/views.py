@@ -26,5 +26,4 @@ def chat(request):
         question,
         user_id
     )
-
     return Response(result)
